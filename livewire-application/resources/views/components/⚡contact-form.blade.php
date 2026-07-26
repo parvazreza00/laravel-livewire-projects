@@ -66,7 +66,7 @@ new class extends Component {
                     <div class="card-body">
                         <div class="form-group mb-3">
                             <label for="name">UserName</label>
-                            <input type="text" id="name" wire:model="form.name" class="form-control"
+                            <input type="text" id="name" wire:model.live="form.name" class="form-control"
                                 placeholder="Enter Name">
                             @error('form.name')
                                 <span class="text-danger">{{ $message }}</span>
@@ -74,7 +74,7 @@ new class extends Component {
                         </div>
                         <div class="form-group mb-3">
                             <label for="email">Email</label>
-                            <input type="text" id="email" class="form-control" wire:model="form.email"
+                            <input type="text" id="email" class="form-control" wire:model.live="form.email"
                                 placeholder="Enter Email">
                             @error('form.email')
                                 <span class="text-danger">{{ $message }}</span>
@@ -82,7 +82,7 @@ new class extends Component {
                         </div>
                         <div class="form-group mb-3">
                             <label for="phone">Phone</label>
-                            <input type="text" id="phone" class="form-control" wire:model="form.phone"
+                            <input type="text" id="phone" class="form-control" wire:model.live="form.phone"
                                 placeholder="Enter Phone">
                             @error('form.phone')
                                 <span class="text-danger">{{ $message }}</span>
@@ -90,7 +90,7 @@ new class extends Component {
                         </div>
                         <div class="form-group mb-3">
                             <label for="message">Message</label>
-                            <textarea id="message" class="form-control" wire:model="form.message" placeholder="Message"> </textarea>
+                            <textarea id="message" class="form-control" wire:model.live="form.message" placeholder="Message"> </textarea>
                             @error('form.message')
                                 <span class="text-danger">{{ $message }}</span>
                             @enderror
