@@ -4,6 +4,7 @@ use Livewire\Component;
 
 use Livewire\Attributes\Validate;
 use App\Livewire\Forms\contactFormRequest;
+use App\Models\Contact;
 
 new class extends Component {
 
@@ -11,50 +12,33 @@ new class extends Component {
 
     public function contformSubmit()
     {
-        $this->validate();
-        // $this->validate([
-        //     'name' => 'required|min:3|max:50|regex:/^[A-Za-z\s]+$/',
-        //     'email' => 'required|email',
-        //     'phone' => 'required|min:11|max:11',
-        //     'message' => 'required|min:5|max:255',
-        //     'nationality' => 'required',
-        //     'gender' => 'required',
-        // ]);
-        dump([
-            'name' => $this->form->name,
-            'email' => $this->form->email,
-            'phone' => $this->form->phone,
-            'message' => $this->form->message,
-            'nationality' => $this->form->nationality,
-            'gender' => $this->form->gender,
-            'newsletter' => $this->form->newsletter,
-        ]);
+        $this->form->validate();
+
+        $contact = Contact::create($this->form->all());
+        $this->form->reset();
+        if($contact){
+            session()->flash('success', 'Contact form submitted successfully.');
+        }else{
+            session()->flash('failed', 'Contact form submission failed.');
+        }
+
     }
-
-    // protected function messages(){
-    //     return[
-    //         'name.required' => "Please enter your name",
-    //         'name.regex' => "Name may only contain letters and spaces.",
-    //         'email.required' => "Please enter your name",
-    //         'email.email' => "Please enter valid email",
-    //         'phone.required' => "Please enter your phone number",
-    //         'phone.digits' => "Please enter valid phone number",
-    //         'phone.min' => "Please enter min 11 chars",
-    //         'phone.max' => "Please enter max 11 chars",
-    //         'message.required' => "Please enter Message",
-    //         'message.min' => "Please enter Min 5 chars Message",
-    //         'message.max' => "Please enter not more than 255 chars Message",
-    //         'nationality.required' => "Please enter your nationality",
-    //         'gender.required' => "Please enter your gender",
-    //     ];
-
-    // }
 };
 ?>
 
 <div>
     <div class="row mt-5">
-        <div class="col-xl-6 m-auto ">
+        <div class="col-xl-6 m-auto">
+            @if(session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if(session('failed'))
+                <div class="alert alert-danger">
+                    {{ session('failed') }}
+                </div>
+            @enderror
             <form wire:submit="contformSubmit">
                 <div class="card shadow">
                     <div class="card-header">
