@@ -15,10 +15,12 @@ class contactFormRequest extends Form
 
     #[Validate('required', message:'Please enter your email.')]
     #[Validate('email', message:'Please enter valid email.')]
+    #[Validate('unique:contacts,email', message:'Email is already exists.')]
     public $email;
 
     #[Validate('required', message:'Please enter your phone number.')]
     #[Validate('digits:11', message:'Phone number must be 11 digits.')]
+    #[Validate('unique:contacts,phone', message:'Phone number is already exists.')]
     public $phone;
 
     #[Validate('required', message:'Please enter your Message.')]
