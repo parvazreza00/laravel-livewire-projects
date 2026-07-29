@@ -21,7 +21,9 @@
 
     <div class="container">
 
-        <livewire:contact-form />
+        {{-- <livewire:contact-form /> --}}
+        {{-- <livewire:counter/> --}}
+        <livewire:file-uploading/>
 
     </div>
 
