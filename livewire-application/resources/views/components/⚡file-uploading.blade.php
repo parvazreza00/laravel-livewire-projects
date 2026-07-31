@@ -7,16 +7,27 @@ use Livewire\Attributes\Validate;
 new class extends Component {
     use WithFileUploads;
 
-    #[validate('required', message:"Please Give Your File")]
-    #[validate('mimes:pdf,doc,csv,xlx', message:"File type must be pdf,doc,csv,xlx")]
-    #[validate('max:2028', message:"File is not greater than 2MB")]
-    public $file;
+    // #[validate('required', message:"Please Give Your File")]
+    // #[validate('mimes:pdf,doc,csv,xlx', message:"File type must be pdf,doc,csv,xlx")]
+
+    // #[validate('mimes:png,jpg,jpeg,', message:"Image type must be png,jpg,jpeg")]
+    #[validate('required', message: 'Please Give Your Any Image')]
+    #[validate('max:2028', message: 'File is not greater than 2MB')]
+    public $files = [];
 
     public function saveFile()
     {
+        $responsefile = [];
+
         $this->validate();
 
-        dd($this->file);
+        foreach ($this->files as $file) {
+            $fileName = time() . '.' . $file->extension();
+
+            $responsefile[] = $file->storeAs('uploads', $fileName);
+        }
+
+        dd($responsefile);
     }
 };
 ?>
@@ -28,10 +39,19 @@ new class extends Component {
             <form wire:submit="saveFile">
                 <div>
                     <label for="file">File-Upload</label>
-                    <input type="file" wire:model="file" class="form-control">
-                    @error('file')
-                    <p class="text-danger">{{ $message }}</p>
+                    <input type="file" wire:model="files" class="form-control" multiple>
+                    <div class="spinner-border" role="status" wire:loading wire:target="files">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    @error('files.*')
+                        <p class="text-danger">{{ $message }}</p>
                     @enderror
+                    @if (count($files) > 0)
+                        @foreach ($files as $file)
+                            <img src="{{ $file->temporaryUrl() }}" alt="" class="img-fluid"
+                                style="width: 100px;height: 100px;">
+                        @endforeach
+                    @endif
                 </div>
                 <div class="text-center mt-5">
                     <button type="submit" class="btn btn-primary">Submit</button>
