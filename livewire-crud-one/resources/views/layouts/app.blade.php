@@ -9,6 +9,12 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         @livewireStyles
+        
+        <style>
+            tr, td{
+                vertical-align: middle;
+            }
+        </style>
     </head>
     <body>
         {{ $slot }}
