@@ -6,19 +6,42 @@ use Illuminate\Support\Str;
 use Livewire\WithPagination;
 use Livewire\WithoutUrlPagination;
 use Livewire\Attributes\Computed;
+use Illuminate\Support\Facades\Storage;
+use Livewire\Attributes\Title;
 
 new class extends Component {
     use WithPagination, WithoutUrlPagination;
 
+    #[Title('Livewire 4 crud with lareve')]
+
     #[Computed]
     public function posts()
     {
-        return Post::paginate(5);
+        return Post::orderBy('id','DESC')->paginate(5);
     }
 
     public function shortContent($content)
     {
         return Str::words($content, 10, '...');
+    }
+
+    public function deletePost(Post $post){
+        // dd($post);
+        if($post){
+            if(Storage::exists($post->featrued_image)){
+                Storage::delete($post->featrued_image);
+            }
+            $deleteResponse = $post->delete();
+            if($deleteResponse){
+                session()->flash('success','Post deleted succressfully');
+            }else{
+                session()->flash('error','Post do not deleted');
+            }
+        }else{
+            session()->flash('error','Post do not Found');
+        }
+
+        return $this->redirect('/', navigate:true);
     }
 };
 ?>
@@ -79,7 +102,7 @@ new class extends Component {
                                 </td>
                                 <td>
                                     <a wire:navigate href="{{ route('post.edit', $post->id) }}" class="btn btn-success btn-sm">Edit</a>
-                                    <button class="btn btn-danger btn-sm">Delete</button>
+                                    <button wire:confirm="Are you sure to delete the post?" wire:click="deletePost({{ $post->id }})" class="btn btn-danger btn-sm">Delete</button>
                                 </td>
                             </tr>
                         @endforeach

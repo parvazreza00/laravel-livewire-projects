@@ -4,9 +4,12 @@ use Livewire\Component;
 use Livewire\Attributes\Validate;
 use Livewire\WithFileUploads;
 use App\Models\Post;
+use Livewire\Attributes\Title;
 
 new class extends Component {
     use WithFileUploads;
+
+      #[Title('Livewire 4 crud with lareve')]
 
     public $isView = false;
     public $post = null;
@@ -66,7 +69,7 @@ new class extends Component {
         }
         if ($this->post) {
             if ($this->post) {
-                $this->post->title = $this->post;
+                $this->post->title = $this->title;
                 $this->post->content = $this->content;
 
                 if ($imagePath) {
