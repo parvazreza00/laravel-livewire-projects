@@ -80,7 +80,7 @@ new class extends Component {
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Featured Image</th>
-                            <th scope="col">Title</th>+-
+                            <th scope="col">Title</th>
                             <th scope="col">Content</th>
                             <th scope="col">Date</th>
                             <th scope="col">Action</th>
