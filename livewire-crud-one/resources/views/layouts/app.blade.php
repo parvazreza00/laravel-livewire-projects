@@ -9,10 +9,12 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         @livewireStyles
-        
+
         <style>
-            tr, td{
+            table, tr, td,th{
                 vertical-align: middle;
+                border:1px solid gray;
+                text-align: center
             }
         </style>
     </head>
