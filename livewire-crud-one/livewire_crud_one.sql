@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Aug 01, 2026 at 05:24 PM
+-- Generation Time: Aug 07, 2026 at 02:02 PM
 -- Server version: 8.4.7
 -- PHP Version: 8.3.28
 
@@ -41,8 +41,8 @@ CREATE TABLE IF NOT EXISTS `cache` (
 --
 
 INSERT INTO `cache` (`key`, `value`, `expiration`) VALUES
-('laravel-cache-5c785c036466adea360111aa28563bfd556b5fba:timer', 'i:1785583826;', 1785583826),
-('laravel-cache-5c785c036466adea360111aa28563bfd556b5fba', 'i:1;', 1785583826);
+('laravel-cache-5c785c036466adea360111aa28563bfd556b5fba:timer', 'i:1786106598;', 1786106598),
+('laravel-cache-5c785c036466adea360111aa28563bfd556b5fba', 'i:1;', 1786106598);
 
 -- --------------------------------------------------------
 
@@ -58,6 +58,45 @@ CREATE TABLE IF NOT EXISTS `cache_locks` (
   PRIMARY KEY (`key`),
   KEY `cache_locks_expiration_index` (`expiration`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `employees`
+--
+
+DROP TABLE IF EXISTS `employees`;
+CREATE TABLE IF NOT EXISTS `employees` (
+  `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT,
+  `employee_id` varchar(191) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `name` varchar(150) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `email` varchar(150) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `phone` varchar(20) COLLATE utf8mb3_unicode_ci NOT NULL,
+  `joining_date` date DEFAULT NULL,
+  `salary` decimal(10,2) NOT NULL,
+  `gender` tinyint NOT NULL DEFAULT '1' COMMENT '1=>male,2=>female,3=>other',
+  `department` varchar(50) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `designation` varchar(50) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `photo` varchar(255) COLLATE utf8mb3_unicode_ci DEFAULT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1',
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `employees_employee_id_unique` (`employee_id`),
+  UNIQUE KEY `employees_email_unique` (`email`)
+) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+
+--
+-- Dumping data for table `employees`
+--
+
+INSERT INTO `employees` (`id`, `employee_id`, `name`, `email`, `phone`, `joining_date`, `salary`, `gender`, `department`, `designation`, `photo`, `status`, `created_at`, `updated_at`) VALUES
+(2, 'EMP-00001', 'parvaz rezas', 'parvazreza00@gmail.com', '01738920277', '2026-08-01', 78000.00, 1, 'ITs', 'Software Developer', 'uploads/employees//1786081124.jpg', 1, '2026-08-06 23:38:44', '2026-08-07 05:11:13'),
+(3, 'EMP-00002', 'Robin', 'robin@gmail.com', '01738920200', '2026-06-01', 50000.00, 1, 'Marketting', 'Marketting manager', 'uploads/employees//1786082635.jpg', 1, '2026-08-07 00:03:55', '2026-08-07 00:03:55'),
+(4, 'EMP-00003', 'Tomal', 'tomal@gmail.com', '01838920290', '2026-06-12', 40000.00, 1, 'Sales', 'Sales Executive', 'uploads/employees//1786083607.jpg', 1, '2026-08-07 00:20:07', '2026-08-07 00:20:07'),
+(10, 'EMP-00007', 'demo1', 'demo@gmail.com', '01738920276', '2026-08-05', 56645.00, 3, 'IT', 'Software Developer', 'uploads/employees//1786106540.jpg', 1, '2026-08-07 06:12:28', '2026-08-07 06:42:20'),
+(6, 'EMP-00005', 'Hasan', 'hasan@gmail.com', '01938020277', '2026-08-05', 40000.00, 1, 'Marketing', 'Field Marketer', 'uploads/employees//1786083843.jpg', 1, '2026-08-07 00:24:03', '2026-08-07 00:24:03'),
+(7, 'EMP-00006', 'Soykot Hassan', 'soykat@gmail.com', '01338920287', '2026-07-12', 24000.00, 1, 'Marchant', 'Field marchander', 'uploads/employees//1786083908.jpg', 1, '2026-08-07 00:25:08', '2026-08-07 00:25:08');
 
 -- --------------------------------------------------------
 
@@ -131,17 +170,18 @@ CREATE TABLE IF NOT EXISTS `migrations` (
   `migration` varchar(191) COLLATE utf8mb3_unicode_ci NOT NULL,
   `batch` int NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 --
 -- Dumping data for table `migrations`
 --
 
 INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
-(1, '0001_01_01_000000_create_users_table', 1),
-(2, '0001_01_01_000001_create_cache_table', 1),
-(3, '0001_01_01_000002_create_jobs_table', 1),
-(4, '2026_07_31_164113_create_posts_table', 1);
+(5, '0001_01_01_000000_create_users_table', 1),
+(6, '0001_01_01_000001_create_cache_table', 1),
+(7, '0001_01_01_000002_create_jobs_table', 1),
+(8, '2026_07_31_164113_create_posts_table', 1),
+(9, '2026_08_03_174203_create_employees_table', 1);
 
 -- --------------------------------------------------------
 
@@ -172,25 +212,19 @@ CREATE TABLE IF NOT EXISTS `posts` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb3 COLLATE=utf8mb3_unicode_ci;
 
 --
 -- Dumping data for table `posts`
 --
 
 INSERT INTO `posts` (`id`, `title`, `content`, `featrued_image`, `created_at`, `updated_at`) VALUES
-(1, 'First Post', 'but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised thanks to these sheets and more recently with desktop publishing software like Aldus PageMaker and Microsoft Word including versions of Lorem Ipsum.', 'public/uploads/1785560715.jpg', '2026-07-31 23:05:15', '2026-07-31 23:05:15'),
-(2, 'Second Post', 'but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised thanks to these sheets and more recently with desktop publishing software like Aldus PageMaker and Microsoft Word including versions of Lorem Ipsum.', 'public/uploads/1785560770.jpg', '2026-07-31 23:06:10', '2026-07-31 23:06:10'),
-(3, 'fffffffffffff', 'ffffffffffffffffffffffffff', 'uploads/1785564416.jpg', '2026-08-01 00:06:56', '2026-08-01 00:06:56'),
-(4, 'Third Post', 'Aldus PageMaker including versions of Lorem Ipsum', 'uploads/1785573286.jpg', '2026-08-01 02:34:46', '2026-08-01 02:34:46'),
-(5, 'Fourth Post', 'Aldus PageMaker including versions of Lorem Ipsum', 'uploads/1785573302.jpg', '2026-08-01 02:35:02', '2026-08-01 02:35:02'),
-(6, 'Fifth Post', 'Aldus PageMaker including versions of Lorem Ipsum', 'uploads/1785573320.jpg', '2026-08-01 02:35:20', '2026-08-01 02:35:20'),
-(7, 'Seventh Post', 'Aldus PageMaker including versions of Lorem Ipsum', 'uploads/1785573336.jpg', '2026-08-01 02:35:36', '2026-08-01 02:35:36'),
-(8, 'Eitghth Post', 'Aldus PageMaker including versions of Lorem Ipsum', 'uploads/1785573351.jpg', '2026-08-01 02:35:51', '2026-08-01 02:35:51'),
-(9, 'Ninth post', 'Aldus PageMaker including versions of Lorem Ipsum', 'uploads/1785573363.jpg', '2026-08-01 02:36:03', '2026-08-01 02:36:03'),
-(10, 'Tenth Post', 'Aldus PageMaker including versions of Lorem Ipsum', 'uploads/1785573377.jpg', '2026-08-01 02:36:17', '2026-08-01 02:36:17'),
-(11, 'Eleventh Post', 'Aldus PageMaker including versions of Lorem Ipsum', 'uploads/1785573392.jpg', '2026-08-01 02:36:32', '2026-08-01 02:36:32'),
-(12, 'iiiiiiiiiiiiiiii', 'kkkkkkkkkkkkkkkkkkkkk', 'uploads/1785583768.jpg', '2026-08-01 05:29:28', '2026-08-01 05:29:28');
+(1, 'FIrst Post', 'This will recreate the database tables with the corrected schema.', 'uploads/1785863094.jpg', '2026-08-04 11:04:54', '2026-08-04 11:04:54'),
+(2, 'Second Post', 'This will recreate the database tables with the corrected schema.', 'uploads/1785863115.jpg', '2026-08-04 11:05:15', '2026-08-04 11:05:15'),
+(3, 'Third Post', 'This will recreate the database tables with the corrected schema.', 'uploads/1785863129.jpg', '2026-08-04 11:05:29', '2026-08-04 11:05:29'),
+(4, 'Fourth Posst', 'This will recreate the database tables with the corrected schema.', 'uploads/1785863145.jpg', '2026-08-04 11:05:45', '2026-08-04 11:05:45'),
+(5, 'Fifth Post ', 'This will recreate the database tables with the corrected schema.', 'uploads/1785863165.jpg', '2026-08-04 11:06:05', '2026-08-04 11:06:05'),
+(6, 'Sixth Post ', 'This will recreate the database tables with the corrected schema.', 'uploads/1785863181.jpg', '2026-08-04 11:06:21', '2026-08-04 11:06:21');
 
 -- --------------------------------------------------------
 
@@ -216,10 +250,8 @@ CREATE TABLE IF NOT EXISTS `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('wfN0sjG8FBDcTo3Obfv346C52YP9zxeMavFgVbEm', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'eyJfdG9rZW4iOiJVb2VaMFNzV3dzZkpXTUpDMzJxRmFTb2I4a0tVcFo2U0FCQ3ZXaHRCIiwiX3ByZXZpb3VzIjp7InVybCI6Imh0dHA6XC9cLzEyNy4wLjAuMTo4MDAwXC9wb3N0XC8zXC9lZGl0Iiwicm91dGUiOiJwb3N0LmVkaXQifSwiX2ZsYXNoIjp7Im9sZCI6W10sIm5ldyI6W119fQ==', 1785604821),
-('VfOtMT0iheGZ5xfst6kVGtbSSHA4sfZVfd8NZufQ', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'eyJfdG9rZW4iOiJCMzd4UGxiU0hRc2o1dnppalVlbHFQNHN4dktmQVlYbWthMjJsbjhkIiwiX3ByZXZpb3VzIjp7InVybCI6Imh0dHA6XC9cLzEyNy4wLjAuMTo4MDAwIiwicm91dGUiOiJwb3N0cyJ9LCJfZmxhc2giOnsib2xkIjpbXSwibmV3IjpbXX19', 1785604652),
-('spwqMOllEsovqA7cKBzJGbaUbU3HUKt2fZonPENr', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'eyJfdG9rZW4iOiJlaTl0ZDQ3aDhYcUZaQ1dCdm9HZ2dzY3kxWnhaanU1cEV3QmQ2R0thIiwiX3ByZXZpb3VzIjp7InVybCI6Imh0dHA6XC9cLzEyNy4wLjAuMTo4MDAwIiwicm91dGUiOiJwb3N0cyJ9LCJfZmxhc2giOnsib2xkIjpbXSwibmV3IjpbXX19', 1785583772),
-('TIg34NPKR83rH9FbHkXTCCefRu9ZVGxjPIWoa9PO', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'eyJfdG9rZW4iOiIxSlpmU1F4SDN3SVA5NThCY0IyRFBKSDNWQzZvWmJGQkRIUlRTS2V3IiwiX3ByZXZpb3VzIjp7InVybCI6Imh0dHA6XC9cLzEyNy4wLjAuMTo4MDAwXC9wb3N0XC81XC9lZGl0Iiwicm91dGUiOiJwb3N0LmVkaXQifSwiX2ZsYXNoIjp7Im9sZCI6W10sIm5ldyI6W119fQ==', 1785595053);
+('6W2rBAzOrut3FisVo3030pHmsjX1inhMII2dCqBL', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'eyJfdG9rZW4iOiJDeXVFSU9VdWRIdGlQaVBWZkJVdnk2QlVzSUpUWnhFdTNHakRnS1lVIiwiX3ByZXZpb3VzIjp7InVybCI6Imh0dHA6XC9cLzEyNy4wLjAuMTo4MDAwXC9hZGQtZW1wbG95ZWUiLCJyb3V0ZSI6ImFkZC5lbXBsb3llZSJ9LCJfZmxhc2giOnsib2xkIjpbXSwibmV3IjpbXX19', 1786111314),
+('FGsTmhLmtvmFvzfd9EXlWQsnniwJPWP9DSux6Bxa', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36', 'eyJfdG9rZW4iOiIweU9vd0tzQTZOaTROZDFxT1hON1JYalFLaE55WldOZmdxQUpBYnRYIiwiX3ByZXZpb3VzIjp7InVybCI6Imh0dHA6XC9cLzEyNy4wLjAuMTo4MDAwIiwicm91dGUiOiJwb3N0cyJ9LCJfZmxhc2giOnsib2xkIjpbXSwibmV3IjpbXX19', 1786111311);
 
 -- --------------------------------------------------------
 
