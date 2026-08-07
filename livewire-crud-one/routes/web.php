@@ -12,3 +12,4 @@ Route::livewire('/post/{post}/edit', 'post-form')->name('post.edit');
 
 Route::livewire('/all-employee', 'employee-list')->name('employees');
 Route::livewire('/add-employee', 'employee-form')->name('add.employee');
+Route::livewire('/employee/{employee}/edit', 'employee-form')->name('edit.employee');
