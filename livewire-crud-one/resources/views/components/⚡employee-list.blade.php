@@ -12,6 +12,19 @@ new class extends Component {
 
     public $searchTerm = null;
     public $activePageNumber = 1;
+    public $sortColumn = 'id';
+    public $sortOrder = 'asc';
+
+    // sording table column wise into the table header column name
+    public function sortBy($columnName)
+    {
+        if ($this->sortColumn === $columnName) {
+            $this->sortOrder = $this->sortOrder === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortColumn = $columnName;
+            $this->sortOrder = 'asc';
+        }
+    }
 
     #[Computed]
     public function employees()
@@ -21,7 +34,7 @@ new class extends Component {
             ->orWhere('department', 'like', '%'. $this->searchTerm . '%')
             ->orWhere('designation', 'like', '%'. $this->searchTerm . '%')
             ->orWhere('salary', 'like', '%'. $this->searchTerm . '%')
-            ->orderBy('id', 'DESC')->paginate(5);
+            ->orderBy($this->sortColumn, $this->sortOrder)->paginate(5);
     }
     public function formatDate($date, $format = 'M d, y')
     {
@@ -102,14 +115,94 @@ new class extends Component {
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Photo</th>
-                            <th>EMP-ID</th>
-                            <th>Name</th>
-                            <th>Gender</th>
-                            <th>Department</th>
-                            <th>Designation</th>
-                            <th>Salary</th>
-                            <th>Joining Date</th>
+                            <th>Photo <span wire:click="sortBy('photo')">
+                                @if($sortColumn === 'photo')
+                                    @if($sortOrder === 'asc')
+                                        <i class="fa-solid fa-sort-up"></i>
+                                    @else
+                                        <i class="fa-solid fa-sort-down"></i>
+                                    @endif
+                                @else
+                                <i class="fa-solid fa-sort" ></i>
+                                @endif
+                            </span> </th>
+                            <th>EMP-ID <span wire:click="sortBy('employee_id')">
+                                @if($sortColumn === 'employee_id')
+                                    @if($sortOrder === 'asc')
+                                        <i class="fa-solid fa-sort-up"></i>
+                                    @else
+                                        <i class="fa-solid fa-sort-down"></i>
+                                    @endif
+                                @else
+                                <i class="fa-solid fa-sort"></i>
+                                @endif
+                            </span> </th>
+                            <th>Name <span wire:click="sortBy('name')">
+                                @if($sortColumn === 'name')
+                                    @if($sortOrder === 'asc')
+                                        <i class="fa-solid fa-sort-up"></i>
+                                    @else
+                                        <i class="fa-solid fa-sort-down"></i>
+                                    @endif
+                                @else
+                                <i class="fa-solid fa-sort"></i>
+                                @endif
+                            </span> </th>
+                            <th>Gender <span wire:click="sortBy('gender')">
+                                @if($sortColumn === 'gender')
+                                    @if($sortOrder === 'asc')
+                                        <i class="fa-solid fa-sort-up"></i>
+                                    @else
+                                        <i class="fa-solid fa-sort-down"></i>
+                                    @endif
+                                @else
+                                <i class="fa-solid fa-sort"></i>
+                                @endif
+                            </span> </th>
+                            <th>Department <span wire:click="sortBy('department')">
+                                @if($sortColumn === 'department')
+                                    @if($sortOrder === 'asc')
+                                        <i class="fa-solid fa-sort-up"></i>
+                                    @else
+                                        <i class="fa-solid fa-sort-down"></i>
+                                    @endif
+                                @else
+                                <i class="fa-solid fa-sort"></i>
+                                @endif
+                            </span> </th>
+                            <th>Designation <span wire:click="sortBy('designation')">
+                                @if($sortColumn === 'designation')
+                                    @if($sortOrder === 'asc')
+                                        <i class="fa-solid fa-sort-up"></i>
+                                    @else
+                                        <i class="fa-solid fa-sort-down"></i>
+                                    @endif
+                                @else
+                                <i class="fa-solid fa-sort"></i>
+                                @endif
+                            </span> </th>
+                            <th>Salary <span wire:click="sortBy('salary')">
+                                @if($sortColumn === 'salary')
+                                    @if($sortOrder === 'asc')
+                                        <i class="fa-solid fa-sort-up"></i>
+                                    @else
+                                        <i class="fa-solid fa-sort-down"></i>
+                                    @endif
+                                @else
+                                <i class="fa-solid fa-sort"></i>
+                                @endif
+                            </span> </th>
+                            <th>Joining Date <span wire:click="sortBy('joining_date')">
+                                @if($sortColumn === 'joining_date')
+                                    @if($sortOrder === 'asc')
+                                        <i class="fa-solid fa-sort-up"></i>
+                                    @else
+                                        <i class="fa-solid fa-sort-down"></i>
+                                    @endif
+                                @else
+                                <i class="fa-solid fa-sort"></i>
+                                @endif
+                            </span> </th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>

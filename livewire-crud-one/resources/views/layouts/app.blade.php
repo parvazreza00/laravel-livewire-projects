@@ -21,7 +21,10 @@
 
             tr th span{
                 cursor: pointer;
+                color:#9DA4A9
             }
+
+
         </style>
     </head>
     <body>
