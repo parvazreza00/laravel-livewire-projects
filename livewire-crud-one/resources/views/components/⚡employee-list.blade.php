@@ -10,10 +10,31 @@ use Carbon\Carbon;
 new class extends Component {
     use WithPagination, WithoutUrlPagination;
 
+    public $searchTerm = null;
+    public $activePageNumber = 1;
+    public $sortColumn = 'id';
+    public $sortOrder = 'asc';
+
+    // sording table column wise into the table header column name
+    public function sortBy($columnName)
+    {
+        if ($this->sortColumn === $columnName) {
+            $this->sortOrder = $this->sortOrder === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortColumn = $columnName;
+            $this->sortOrder = 'asc';
+        }
+    }
+
     #[Computed]
     public function employees()
     {
-        return Employee::orderBy('id', 'DESC')->paginate(5);
+        return Employee::where('name', 'like', '%'. $this->searchTerm . '%')
+            ->orWhere('employee_id', 'like', '%'. $this->searchTerm . '%')
+            ->orWhere('department', 'like', '%'. $this->searchTerm . '%')
+            ->orWhere('designation', 'like', '%'. $this->searchTerm . '%')
+            ->orWhere('salary', 'like', '%'. $this->searchTerm . '%')
+            ->orderBy($this->sortColumn, $this->sortOrder)->paginate(5);
     }
     public function formatDate($date, $format = 'M d, y')
     {
@@ -38,6 +59,21 @@ new class extends Component {
         } else {
             session()->flash('error', 'Employee do not remove from the storage');
         }
+
+        $currentEmployees = $this->employees();
+        if ($currentEmployees->isEmpty() && $this->activePageNumber > 1) {
+            // Redirect to previous page if current page has no employees after deletion
+            $this->gotoPage($this->activePageNumber - 1);
+        } else {
+            // Redirect to current page if it still has employees
+            $this->gotoPage($this->activePageNumber);
+        }
+    }
+
+    public function updatingPage($page)
+    {
+        // dd($page);
+        $this->activePageNumber = $page;
     }
 };
 ?>
@@ -71,19 +107,102 @@ new class extends Component {
         </div>
 
         <div class="card shadow">
-            <div class="card-body mt-4 table-responsive">
+            <div class="col-xl-4 ms-auto my-3 mx-2">
+                <input type="text" class="form-control" placeholder="Search Employee" wire:model.live.debounce.250ms="searchTerm">
+            </div>
+            <div class="card-body table-responsive">
                 <table class="table table-striped border">
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Photo</th>
-                            <th>EMP-ID</th>
-                            <th>Name</th>
-                            <th>Gender</th>
-                            <th>Department</th>
-                            <th>Designation</th>
-                            <th>Salary</th>
-                            <th>Joining Date</th>
+                            <th>Photo <span wire:click="sortBy('photo')">
+                                @if($sortColumn === 'photo')
+                                    @if($sortOrder === 'asc')
+                                        <i class="fa-solid fa-sort-up"></i>
+                                    @else
+                                        <i class="fa-solid fa-sort-down"></i>
+                                    @endif
+                                @else
+                                <i class="fa-solid fa-sort" ></i>
+                                @endif
+                            </span> </th>
+                            <th>EMP-ID <span wire:click="sortBy('employee_id')">
+                                @if($sortColumn === 'employee_id')
+                                    @if($sortOrder === 'asc')
+                                        <i class="fa-solid fa-sort-up"></i>
+                                    @else
+                                        <i class="fa-solid fa-sort-down"></i>
+                                    @endif
+                                @else
+                                <i class="fa-solid fa-sort"></i>
+                                @endif
+                            </span> </th>
+                            <th>Name <span wire:click="sortBy('name')">
+                                @if($sortColumn === 'name')
+                                    @if($sortOrder === 'asc')
+                                        <i class="fa-solid fa-sort-up"></i>
+                                    @else
+                                        <i class="fa-solid fa-sort-down"></i>
+                                    @endif
+                                @else
+                                <i class="fa-solid fa-sort"></i>
+                                @endif
+                            </span> </th>
+                            <th>Gender <span wire:click="sortBy('gender')">
+                                @if($sortColumn === 'gender')
+                                    @if($sortOrder === 'asc')
+                                        <i class="fa-solid fa-sort-up"></i>
+                                    @else
+                                        <i class="fa-solid fa-sort-down"></i>
+                                    @endif
+                                @else
+                                <i class="fa-solid fa-sort"></i>
+                                @endif
+                            </span> </th>
+                            <th>Department <span wire:click="sortBy('department')">
+                                @if($sortColumn === 'department')
+                                    @if($sortOrder === 'asc')
+                                        <i class="fa-solid fa-sort-up"></i>
+                                    @else
+                                        <i class="fa-solid fa-sort-down"></i>
+                                    @endif
+                                @else
+                                <i class="fa-solid fa-sort"></i>
+                                @endif
+                            </span> </th>
+                            <th>Designation <span wire:click="sortBy('designation')">
+                                @if($sortColumn === 'designation')
+                                    @if($sortOrder === 'asc')
+                                        <i class="fa-solid fa-sort-up"></i>
+                                    @else
+                                        <i class="fa-solid fa-sort-down"></i>
+                                    @endif
+                                @else
+                                <i class="fa-solid fa-sort"></i>
+                                @endif
+                            </span> </th>
+                            <th>Salary <span wire:click="sortBy('salary')">
+                                @if($sortColumn === 'salary')
+                                    @if($sortOrder === 'asc')
+                                        <i class="fa-solid fa-sort-up"></i>
+                                    @else
+                                        <i class="fa-solid fa-sort-down"></i>
+                                    @endif
+                                @else
+                                <i class="fa-solid fa-sort"></i>
+                                @endif
+                            </span> </th>
+                            <th>Joining Date <span wire:click="sortBy('joining_date')">
+                                @if($sortColumn === 'joining_date')
+                                    @if($sortOrder === 'asc')
+                                        <i class="fa-solid fa-sort-up"></i>
+                                    @else
+                                        <i class="fa-solid fa-sort-down"></i>
+                                    @endif
+                                @else
+                                <i class="fa-solid fa-sort"></i>
+                                @endif
+                            </span> </th>
                             <th>Status</th>
                             <th>Action</th>
                         </tr>

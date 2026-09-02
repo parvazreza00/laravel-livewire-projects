@@ -13,11 +13,29 @@ new class extends Component {
     use WithPagination, WithoutUrlPagination;
 
     #[Title('Livewire 4 crud with lareve')]
+    public $searchTerm = null;
+    public $activePageNumber = 1;
+    public $sortColumn = 'id';
+    public $sortOrder = 'asc';
+
+    public function sortBy($columnName)
+    {
+        // dd($columnName);
+        if ($this->sortColumn === $columnName) {
+            $this->sortOrder = $this->sortOrder === 'asc' ? 'desc' : 'asc';
+        } else {
+            $this->sortColumn = $columnName;
+            $this->sortOrder = 'asc';
+        }
+    }
 
     #[Computed]
     public function posts()
     {
-        return Post::orderBy('id','DESC')->paginate(5);
+        return Post::where('title', 'like', '%' . $this->searchTerm . '%')
+            ->orWhere('content', 'like', '%' . $this->searchTerm . '%')
+            ->orderBy($this->sortColumn, $this->sortOrder)
+            ->paginate(5);
     }
 
     public function shortContent($content)
@@ -25,23 +43,38 @@ new class extends Component {
         return Str::words($content, 10, '...');
     }
 
-    public function deletePost(Post $post){
+    public function deletePost(Post $post)
+    {
         // dd($post);
-        if($post){
-            if(Storage::exists($post->featrued_image)){
+        if ($post) {
+            if (Storage::exists($post->featrued_image)) {
                 Storage::delete($post->featrued_image);
             }
             $deleteResponse = $post->delete();
-            if($deleteResponse){
-                session()->flash('success','Post deleted succressfully');
-            }else{
-                session()->flash('error','Post do not deleted');
+            if ($deleteResponse) {
+                session()->flash('success', 'Post deleted succressfully');
+            } else {
+                session()->flash('error', 'Post do not deleted');
             }
-        }else{
-            session()->flash('error','Post do not Found');
+        } else {
+            session()->flash('error', 'Post do not Found');
         }
 
-        return $this->redirect('/', navigate:true);
+        $currentPosts = $this->posts();
+        if ($currentPosts->isEmpty() && $this->activePageNumber > 1) {
+            // redirect to previous page if current page has no posts after deletion
+            $this->gotoPage($this->activePageNumber - 1);
+        } else {
+            // redirect to current page if it still has posts
+            $this->gotoPage($this->activePageNumber);
+        }
+
+        // return $this->redirect('/', navigate:true);
+    }
+
+    public function updatingPage($page)
+    {
+        $this->activePageNumber = $page;
     }
 };
 ?>
@@ -74,15 +107,61 @@ new class extends Component {
 
         {{-- Post listing table --}}
         <div class="card shadow">
-            <div class="card-body mt-4 table-responsive">
+            <div class="col-xl-4 ms-auto my-3 mx-2">
+                <input type="text" class="form-control" placeholder="Search Post"
+                    wire:model.live.debounce.250ms="searchTerm">
+            </div>
+            <div class="card-body table-responsive">
                 <table class="table border table-striped">
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Featured Image</th>
-                            <th scope="col">Title</th>
-                            <th scope="col">Content</th>
-                            <th scope="col">Date</th>
+                            <th scope="col">Featured Image <span wire:click="sortBy('featrued_image')">
+                                @if($sortColumn === 'featrued_image')
+                                    @if($sortOrder === 'asc')
+                                        <i class="fa-solid fa-sort-up"></i>
+                                    @else
+                                        <i class="fa-solid fa-sort-down"></i>
+                                    @endif
+                                @else
+                                <i class="fa-solid fa-sort"></i>
+                                @endif
+                            </span> </th>
+                            <th scope="col">Title <span wire:click="sortBy('title')">
+                                 @if($sortColumn === 'title')
+                                    @if($sortOrder === 'asc')
+                                        <i class="fa-solid fa-sort-up"></i>
+                                    @else
+                                        <i class="fa-solid fa-sort-down"></i>
+                                    @endif
+                                @else
+                                <i class="fa-solid fa-sort"></i>
+                                @endif
+
+                            </span> </th>
+                            <th scope="col">Content <span wire:click="sortBy('content')">
+                                @if($sortColumn === 'content')
+                                    @if($sortOrder === 'asc')
+                                        <i class="fa-solid fa-sort-up"></i>
+                                    @else
+                                        <i class="fa-solid fa-sort-down"></i>
+                                    @endif
+                                @else
+                                <i class="fa-solid fa-sort"></i>
+                                @endif
+
+                            </span> </th>
+                            <th scope="col">Date <span wire:click="sortBy('created_at')">
+                                @if($sortColumn === 'created_at')
+                                    @if($sortOrder === 'asc')
+                                        <i class="fa-solid fa-sort-up"></i>
+                                    @else
+                                        <i class="fa-solid fa-sort-down"></i>
+                                    @endif
+                                @else
+                                <i class="fa-solid fa-sort"></i>
+                                @endif
+                            </span> </th>
                             <th scope="col">Action</th>
                         </tr>
                     </thead>
@@ -90,9 +169,11 @@ new class extends Component {
                         @foreach ($this->posts as $key => $post)
                             <tr>
                                 <th scope="row">{{ $key + 1 }}</th>
-                                <td><a wire:navigate href="{{ route('post.view', $post->id) }}"> <img src="{{ Storage::url($post->featrued_image) }}" alt=""
-                                        class="img-fluid" style="width: 150px; height: 100px"> </a>  </td>
-                                <td><a class="text-decoration-none" wire:navigate href="{{ route('post.view', $post->id) }}">{{ $post->title }}</td>
+                                <td><a wire:navigate href="{{ route('post.view', $post->id) }}"> <img
+                                            src="{{ Storage::url($post->featrued_image) }}" alt=""
+                                            class="img-fluid" style="width: 150px; height: 100px"> </a> </td>
+                                <td><a class="text-decoration-none" wire:navigate
+                                        href="{{ route('post.view', $post->id) }}">{{ $post->title }}</td>
                                 <td>{{ $this->shortContent($post->content) }} </a></td>
                                 <td><span><strong>Posted:
                                         </strong>{{ \Carbon\Carbon::parse($post->created_at)->diffForHumans() }}</span>
@@ -101,14 +182,17 @@ new class extends Component {
                                         </strong>{{ \Carbon\Carbon::parse($post->updated_at)->diffForHumans() }}</span>
                                 </td>
                                 <td>
-                                    <a wire:navigate href="{{ route('post.edit', $post->id) }}" class="btn btn-success btn-sm">Edit</a>
-                                    <button wire:confirm="Are you sure to delete the post?" wire:click="deletePost({{ $post->id }})" class="btn btn-danger btn-sm">Delete</button>
+                                    <a wire:navigate href="{{ route('post.edit', $post->id) }}"
+                                        class="btn btn-success btn-sm">Edit</a>
+                                    <button wire:confirm="Are you sure to delete the post?"
+                                        wire:click="deletePost({{ $post->id }})"
+                                        class="btn btn-danger btn-sm">Delete</button>
                                 </td>
                             </tr>
                         @endforeach
                     </tbody>
                 </table>
-                 {{ $this->posts->links() }}
+                {{ $this->posts->links() }}
             </div>
         </div>
 
