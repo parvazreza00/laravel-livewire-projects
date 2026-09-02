@@ -13,11 +13,15 @@ new class extends Component {
     use WithPagination, WithoutUrlPagination;
 
     #[Title('Livewire 4 crud with lareve')]
+    public $searchTerm = null;
+    public $activePageNumber = 1;
 
     #[Computed]
     public function posts()
     {
-        return Post::orderBy('id','DESC')->paginate(5);
+        return Post::where('title', 'like', '%'. $this->searchTerm . '%')
+        ->orWhere('content', 'like', '%'. $this->searchTerm . '%')
+        ->orderBy('id','DESC')->paginate(5);
     }
 
     public function shortContent($content)
@@ -41,7 +45,21 @@ new class extends Component {
             session()->flash('error','Post do not Found');
         }
 
-        return $this->redirect('/', navigate:true);
+        $currentPosts = $this->posts();
+        if($currentPosts->isEmpty() && $this->activePageNumber > 1){
+            // redirect to previous page if current page has no posts after deletion
+            $this->gotoPage($this->activePageNumber - 1);
+        }else{
+         // redirect to current page if it still has posts
+            $this->gotoPage($this->activePageNumber);
+        }
+
+
+        // return $this->redirect('/', navigate:true);
+    }
+
+    public function updatingPage($page){
+       $this->activePageNumber =  $page;
     }
 };
 ?>
@@ -74,7 +92,10 @@ new class extends Component {
 
         {{-- Post listing table --}}
         <div class="card shadow">
-            <div class="card-body mt-4 table-responsive">
+            <div class="col-xl-4 ms-auto my-3 mx-2">
+                <input type="text" class="form-control" placeholder="Search Post" wire:model.live.debounce.250ms="searchTerm">
+            </div>
+            <div class="card-body table-responsive">
                 <table class="table border table-striped">
                     <thead>
                         <tr>

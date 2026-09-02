@@ -10,10 +10,18 @@ use Carbon\Carbon;
 new class extends Component {
     use WithPagination, WithoutUrlPagination;
 
+    public $searchTerm = null;
+    public $activePageNumber = 1;
+
     #[Computed]
     public function employees()
     {
-        return Employee::orderBy('id', 'DESC')->paginate(5);
+        return Employee::where('name', 'like', '%'. $this->searchTerm . '%')
+            ->orWhere('employee_id', 'like', '%'. $this->searchTerm . '%')
+            ->orWhere('department', 'like', '%'. $this->searchTerm . '%')
+            ->orWhere('designation', 'like', '%'. $this->searchTerm . '%')
+            ->orWhere('salary', 'like', '%'. $this->searchTerm . '%')
+            ->orderBy('id', 'DESC')->paginate(5);
     }
     public function formatDate($date, $format = 'M d, y')
     {
@@ -38,6 +46,21 @@ new class extends Component {
         } else {
             session()->flash('error', 'Employee do not remove from the storage');
         }
+
+        $currentEmployees = $this->employees();
+        if ($currentEmployees->isEmpty() && $this->activePageNumber > 1) {
+            // Redirect to previous page if current page has no employees after deletion
+            $this->gotoPage($this->activePageNumber - 1);
+        } else {
+            // Redirect to current page if it still has employees
+            $this->gotoPage($this->activePageNumber);
+        }
+    }
+
+    public function updatingPage($page)
+    {
+        // dd($page);
+        $this->activePageNumber = $page;
     }
 };
 ?>
@@ -71,7 +94,10 @@ new class extends Component {
         </div>
 
         <div class="card shadow">
-            <div class="card-body mt-4 table-responsive">
+            <div class="col-xl-4 ms-auto my-3 mx-2">
+                <input type="text" class="form-control" placeholder="Search Employee" wire:model.live.debounce.250ms="searchTerm">
+            </div>
+            <div class="card-body table-responsive">
                 <table class="table table-striped border">
                     <thead>
                         <tr>
